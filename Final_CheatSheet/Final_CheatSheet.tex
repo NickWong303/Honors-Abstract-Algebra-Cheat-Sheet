@@ -1,0 +1,971 @@
+% CHEAT SHEET – Nilpotent groups, Representation theory, Ring theory, Field theory
+% Compile with pdflatex
+\documentclass[10pt,landscape]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% --- MATH & SYMBOLS (Must load before \newtheorem and \operatorname) ---
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathrsfs}                    % for \mathscr (e.g., representation)
+
+\usepackage{etoolbox}
+\pretocmd{\section}{\par\vspace{0.3\baselineskip}\hrule\vspace{0.1\baselineskip}}{}{}
+
+\newcommand{\im}{\operatorname{im}}
+
+% --- THEOREM ENVIRONMENTS ---
+% Define 'theorem' FIRST so other environments can share its counter.
+% This allows Definition, Example, etc., to sequence together (e.g., 9.1.1, 9.1.2, 9.1.3).
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{property}[theorem]{Property}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{construction}[theorem]{Construction}
+
+% --- MAXIMUM SPACE USAGE -------------------------------------------------
+\usepackage[top=0.4cm, bottom=0.4cm, left=0.4cm, right=0.4cm, headsep=0pt, footskip=0pt]{geometry}
+\usepackage{multicol}
+\setlength{\columnsep}{0.3cm}
+\setlength{\columnseprule}{0.4pt}          % no line between columns
+
+% --- COMPACT LISTS & SPACING --------------------------------------------
+\usepackage{enumitem}
+\setlist{nosep, left=0pt, itemsep=0.1ex, topsep=0pt, parsep=0pt, partopsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.3ex}
+\raggedright
+
+% --- NO PAGE NUMBERS ----------------------------------------------------
+\pagestyle{empty}
+
+% --- GLOBAL SMALL FONT --------------------------------------------------
+\scriptsize   % ~30% smaller than normal – dense but readable
+
+% --- CUSTOM TINY HEADINGS -----------------------------------------------
+\newcommand{\sechead}[1]{\vspace{0.3ex}\textbf{\small #1}\vspace{0.1ex}\hrule\vspace{0.2ex}}
+
+\begin{document}
+
+\begin{multicols}{3}   % 3 columns – adjust to 2 or 4 if needed
+
+% ---------------------------------------------------------
+%  REPRESENTATION THEORY (up to tensor reps)
+% ---------------------------------------------------------
+% \sechead{Repr. Theory}
+%
+%\begin{itemize}
+%\item $\chi_{V\otimes W}=\chi_V\cdot\chi_W$
+%
+%\item \textbf{Schur's Lemma}: If $V,W$ irredu. repr. of $G$ and $\varphi: V\to W$ is a $G$-linear map, then $\varphi=0$ or iso..
+%  
+%\item \textbf{Character Orthogonality}: For irredu. char. $\chi,\psi$ of $G$, $\langle\chi,\psi\rangle=\frac{1}{|G|}\sum_{g\in G}\chi(g)\overline{\psi(g)}=1$ if $\chi=\psi$, else $0$.
+%\item \textbf{Frobenius Reciprocity}: For $H\leq G$, $\langle\mathrm{Ind}_H^G\chi,\psi\rangle_G=\langle\chi,\mathrm{Res}^G_H\psi\rangle_H$ for char. $\chi$ of $H$, $\psi$ of $G$.
+%\end{itemize}
+
+% ---------------------------------------------------------
+%  RING THEORY
+% ---------------------------------------------------------
+%\sechead{Ring Theory}
+
+%\begin{itemize}
+%\item $R/I$ is integral D. $\iff I$ is prime.
+%\item $R/I$ is field $\iff I$ is maximal.
+%
+%\item \textbf{first iso. thm.}: $\displaystyle{R/\ker\varphi\cong\im\varphi}$
+%
+%\item \textbf{Eisenstein's criterion}: $p()$ is irreducible in $\mathbb{Q}[x]$ if $\exists p, p\mid a_i(i\neq n), p \nmid a_n, p^2 \nmid a_0$.
+%
+%\item \textbf{CRT}: $R/(I\cap J)\cong R/I\times R/J$ if $I,J$ comaximal.
+
+%\item \textbf{Gauss's Lemma}: $R$ a UFD, polynomial in $R[x]$ is irreducible in Frac$(R(x))$ iff it is irreducible in $R[x]$.
+%\end{itemize}
+
+% ---------------------------------------------------------
+%  FIELD THEORY (no Galois)
+% ---------------------------------------------------------
+%\sechead{Field Theory}
+
+%\begin{itemize}
+%\item \textbf{Tower law}: $L/K/F\implies [L:F]=[L:K][K:F]$
+%\end{itemize}
+
+\section{Group Representations, Irreducibility, Characters (Section 9)}
+
+\begin{definition}[9.1.1]
+Let $V$ be a vector space over $\mathbb{C}$. Put
+\[
+\mathrm{GL}(V) := \{\mathbb{C}\text{-linear isomorphisms } \phi: V \stackrel{\sim}{\to} V\}.
+\]
+This is a group under composition.
+\end{definition}
+
+\begin{definition}[9.1.2]
+Let $G$ be a group and $V$ a vector space over $\mathbb{C}$. A linear representation of $G$ on $V$ is a homomorphism $\rho: G \to \mathrm{GL}(V)$, i.e. for all $g,h\in G$,
+\[
+\rho(gh) = \rho(g)\rho(h).
+\]
+\end{definition}
+
+\begin{example}[9.1.3]
+\begin{enumerate}
+\item 1-dimensional representations correspond to homomorphisms $\rho: G \to \mathbb{C}^\times$.
+\item The dihedral group $D_{2n}$ acting on the plane gives a representation.
+\item The regular representation: $V = \mathbb{C}[G] = \{\sum_{g\in G} a_g [g]\}$ with left translation.
+\item If $G$ acts on a set $X$, then $\mathbb{C}[X]$ is a representation.
+\end{enumerate}
+\end{example}
+
+\begin{definition}[9.1.4]
+If $(V,\rho)$ and $(V',\rho')$ are representations, a $G$-equivariant linear map $\phi: V\to V'$ is called a homomorphism of representations. If $\phi$ is a bijection, it is an isomorphism.
+\end{definition}
+
+\begin{definition}[9.2.1]
+Let $\rho: G\to \mathrm{GL}(V)$ be a linear representation. A subrepresentation is a $\mathbb{C}$-linear subspace $W\subseteq V$ that is stable under $G$-action: $\forall g\in G, \rho(g)(W)\subseteq W$.
+\end{definition}
+
+\begin{example}[9.2.2]
+In the regular representation, $W = \{a\sum_{h\in G}[h] \mid a\in\mathbb{C}\}$ is a 1-dimensional subrepresentation (the trivial representation).
+\end{example}
+
+\begin{example}[9.2.3]
+If $\phi: V\to W$ is a homomorphism of representations, then $\ker\phi$ is a subrepresentation of $V$.
+\end{example}
+
+\begin{definition}[9.2.4]
+Let $(\rho,W)$ and $(\rho',W')$ be representations. Their direct sum $\rho\oplus\rho'$ is defined by $(\rho\oplus\rho')(g)(w,w') = (\rho(g)w, \rho'(g)w')$.
+\end{definition}
+
+\begin{theorem}[9.2.5]
+Let $G$ be a finite group. If $W\subseteq V$ is a subrepresentation, then there exists a complementary subrepresentation $W^\circ\subseteq V$ such that $V = W\oplus W^\circ$.
+\end{theorem}
+
+\begin{construction}[9.2.6 (Averaging)]
+Let $(\rho_1,W_1)$ and $(\rho_2,W_2)$ be representations of a finite group $G$. For any $\mathbb{C}$-linear map $\phi: W_1\to W_2$, define
+\[
+\tilde\phi := \frac{1}{|G|}\sum_{g\in G} \rho_2(g)\circ \phi \circ \rho_1(g)^{-1}.
+\]
+Then $\tilde\phi$ is a $G$-homomorphism.
+\end{construction}
+
+\begin{definition}[9.2.8]
+A linear representation $V$ is called irreducible if the only subrepresentations are $\{0\}$ and $V$.
+\end{definition}
+
+\begin{corollary}[9.2.9]
+If $G$ is finite, then every finite dimensional representation $V$ is completely reducible: $V\cong W_1\oplus\cdots\oplus W_k$ with each $W_i$ irreducible.
+\end{corollary}
+
+\begin{definition}[9.3.2]
+If $(\rho_1,V)$ and $(\rho_2,W)$ are representations of $G$, their tensor product $V\otimes W$ has $G$-action $\rho(g)(v\otimes w) = \rho_1(g)v \otimes \rho_2(g)w$.
+\end{definition}
+
+\begin{definition}[9.3.4]
+If $(\rho,V)$ is a representation, the dual representation $V^* = \operatorname{Hom}_{\mathbb{C}}(V,\mathbb{C})$ has action $(\rho^*(g)(v^*))(v) = v^*(\rho(g^{-1})v)$.
+\end{definition}
+
+
+\section{Schur's Lemma, Orthogonality Relations (Section 10)}
+
+\begin{definition}[10.1.2]
+For a representation $\rho: G\to \mathrm{GL}(V)$, its character is $\chi_\rho(g) = \operatorname{Tr}(\rho(g))$.
+\end{definition}
+
+\begin{property}[10.1.3]
+\begin{enumerate}
+\item $\chi_\rho(1) = \dim V$.
+\item $\chi_\rho(hgh^{-1}) = \chi_\rho(g)$.
+\item $\chi_{\rho^*}(g) = \chi_\rho(g^{-1}) = \overline{\chi_\rho(g)}$.
+\end{enumerate}
+\end{property}
+
+\begin{definition}[10.1.4]
+A function $f: G\to \mathbb{C}$ is a class function if $f(ghg^{-1}) = f(h)$ for all $g,h\in G$.
+\end{definition}
+
+\begin{proposition}[10.1.6]
+For representations $\rho_1,\rho_2$,
+\[
+\chi_{\rho_1\oplus\rho_2}(g) = \chi_{\rho_1}(g) + \chi_{\rho_2}(g), \qquad
+\chi_{\rho_1\otimes\rho_2}(g) = \chi_{\rho_1}(g)\cdot \chi_{\rho_2}(g).
+\]
+\end{proposition}
+
+\begin{definition}[10.2.1]
+For two functions $\chi,\eta$ on $G$, define
+\[
+\langle \chi,\eta \rangle = \frac{1}{|G|}\sum_{g\in G} \chi(g)\eta(g^{-1}).
+\]
+\end{definition}
+
+\begin{proposition}[10.2.4 (Schur's Lemma)]
+Let $(\rho_1,V_1)$ and $(\rho_2,V_2)$ be irreducible $\mathbb{C}$-representations of $G$ and $\phi: V_1\to V_2$ a homomorphism.
+\begin{enumerate}
+\item If $(\rho_1,V_1)$ and $(\rho_2,V_2)$ are not isomorphic, then $\phi = 0$.
+\item If $(\rho_1,V_1)=(\rho_2,V_2)$, then $\phi = \lambda \cdot \mathrm{id}_V$ for some $\lambda\in\mathbb{C}$.
+\end{enumerate}
+\end{proposition}
+
+\begin{theorem}[10.2.3 (Schur Orthogonality)]
+If $(\rho_1,V_1)$ and $(\rho_2,V_2)$ are irreducible representations of a finite group $G$, then
+\[
+\langle \chi_{V_1}, \chi_{V_2} \rangle = \begin{cases}
+1 & \text{if } \rho_1\cong\rho_2,\\
+0 & \text{otherwise}.
+\end{cases}
+\]
+\end{theorem}
+
+\begin{proposition}[10.3.1]
+If $V = \bigoplus_{i} W_i^{\oplus m_i}$ with $W_i$ irreducible and pairwise non-isomorphic, then
+\[
+\chi_V = \sum_i m_i \chi_{W_i}, \qquad
+m_i = \langle \chi_V, \chi_{W_i} \rangle.
+\]
+\end{proposition}
+
+\begin{corollary}[10.3.2]
+Two representations with the same character are isomorphic.
+\end{corollary}
+
+\begin{corollary}[10.3.3]
+$V$ is irreducible iff $\langle \chi_V, \chi_V \rangle = 1$.
+\end{corollary}
+
+\begin{theorem}[10.5.1]
+The characters of irreducible representations form an orthonormal basis of the space of class functions. In particular, the number of irreducible representations equals the number of conjugacy classes.
+\end{theorem}
+
+\section{Rings, Ideals, Quotient Rings (Section 11)}
+
+\begin{definition}[11.1.1]
+A ring $R$ is a set with two binary operations $+$ and $\cdot$ such that $(R,+)$ is an abelian group, multiplication is associative, distributive laws hold, and there exists $1\neq 0$ with $1\cdot a = a\cdot 1 = a$ for all $a\in R$.
+\end{definition}
+
+\begin{definition}[11.1.2]
+A division ring is a ring where every nonzero element has a multiplicative inverse. A commutative division ring is a field.
+\end{definition}
+
+\begin{example}[11.1.3]
+$\mathbb{Z}$, $\mathbb{Z}_n$, $\mathbb{Q}$, $\mathbb{R}$, $\mathbb{C}$, polynomial rings, matrix rings, Hamilton quaternions $\mathbb{H}$, group rings $R[G]$.
+\end{example}
+
+\begin{definition}[11.1.4]
+A ring homomorphism $\phi: R\to S$ satisfies $\phi(a+b)=\phi(a)+\phi(b)$, $\phi(ab)=\phi(a)\phi(b)$, and $\phi(1)=1$. The kernel is $\ker\phi = \phi^{-1}(0)$.
+\end{definition}
+
+\begin{definition}[11.1.7]
+\begin{enumerate}
+\item A nonzero $a\in R$ is a zero-divisor if $\exists b\neq0$ with $ab=0$ or $ba=0$.
+\item $u\in R$ is a unit if $\exists v$ with $uv=vu=1$. The set of units is $R^\times$.
+\item A commutative ring with no zero-divisors is an integral domain.
+\end{enumerate}
+\end{definition}
+
+\begin{lemma}[11.1.9]
+A finite integral domain is a field.
+\end{lemma}
+
+\begin{definition}[11.1.10]
+For an integral domain $R$, its fraction field $\operatorname{Frac}(R)$ is the set of equivalence classes $(a,b)$ with $b\neq0$ modulo $(a,b)\sim(c,d)$ iff $ad=bc$.
+\end{definition}
+
+\begin{definition}[11.2.1]
+A subset $I\subseteq R$ is a left ideal if it is a subgroup under addition and $RI\subseteq I$; similarly for right ideal. A two-sided ideal is an ideal. $I$ is proper if $I\neq R$.
+\end{definition}
+
+\begin{definition}[11.2.3]
+If $I$ is a two-sided ideal, the quotient ring $R/I$ has elements $x+I$ with operations $(x+I)+(y+I)=(x+y)+I$, $(x+I)(y+I)=xy+I$.
+\end{definition}
+
+\begin{theorem}[11.2.4 (Isomorphism Theorems for Rings)]
+\begin{enumerate}
+\item If $\phi:R\to S$ is a ring homomorphism, then $\ker\phi$ is an ideal, $\phi(R)$ is a subring, and $R/\ker\phi \cong \phi(R)$.
+\item If $I\subseteq J$ are proper ideals, then $J/I$ is an ideal of $R/I$ and $(R/I)/(J/I)\cong R/J$.
+\item (Lattice isomorphism) There is a bijection between ideals of $R$ containing $I$ and ideals of $R/I$, preserving inclusion, sums, intersections, and quotients.
+\end{enumerate}
+\end{theorem}
+
+\textbf{notation}[11.2.6]
+For a commutative ring $R$ and $a_1,\dots,a_s\in R$, $(a_1,\dots,a_s) = \{\sum x_i a_i \mid x_i\in R\}$ is the ideal generated by them.
+
+
+\begin{definition}[11.2.8]
+For ideals $I,J$, define $I+J = \{a+b\mid a\in I,b\in J\}$, and $IJ = \{\text{finite sums } \sum a_i b_i \mid a_i\in I, b_i\in J\}$.
+\end{definition}
+
+\section{Chinese Remainder Theorem, Euclidean Domains, PIDs (Section 12)}
+
+\begin{definition}[12.1.1]
+Two ideals $I,J$ in a commutative ring are comaximal if $I+J=R$.
+\end{definition}
+
+\begin{theorem}[12.1.2 (Chinese Remainder Theorem)]
+Let $I_1,\dots,I_k$ be ideals in a commutative ring $R$. The natural map $R\to \prod R/I_i$ has kernel $\bigcap I_i$. If the $I_i$ are pairwise comaximal, then the map is surjective and $\bigcap I_i = I_1\cdots I_k$, so
+\[
+R/(I_1\cdots I_k) \cong R/I_1\times\cdots\times R/I_k.
+\]
+\end{theorem}
+
+\begin{definition}[12.4.1]
+An ideal $\mathfrak{m}\subsetneq R$ is maximal if the only ideals containing $\mathfrak{m}$ are $\mathfrak{m}$ and $R$.
+\end{definition}
+
+\begin{proposition}[12.4.3]
+In a commutative ring $R$, an ideal $\mathfrak{m}$ is maximal iff $R/\mathfrak{m}$ is a field.
+\end{proposition}
+
+\begin{definition}[12.5.1]
+A proper ideal $\mathfrak{p}\subsetneq R$ is prime if $ab\in\mathfrak{p}$ implies $a\in\mathfrak{p}$ or $b\in\mathfrak{p}$.
+\end{definition}
+
+\begin{proposition}[12.5.3]
+$\mathfrak{p}$ is prime iff $R/\mathfrak{p}$ is an integral domain.
+\end{proposition}
+
+\begin{corollary}[12.5.4]
+Maximal ideals are prime.
+\end{corollary}
+
+\begin{definition}[12.6.1]
+A principal ideal domain (PID) is an integral domain in which every ideal is principal.
+\end{definition}
+
+\begin{proposition}[12.6.3]
+Every nonzero prime ideal in a PID is maximal.
+\end{proposition}
+
+\section{Unique Factorization Domains (Section 13)}
+
+\begin{definition}[13.1.1]
+An integral domain $R$ is a Euclidean domain if there exists a norm $\operatorname{Nm}:R\to \mathbb{Z}_{\ge0}$ with $\operatorname{Nm}(0)=0$ such that for any $a,b\neq0$, there exist $q,r\in R$ with $a=bq+r$ and either $r=0$ or $\operatorname{Nm}(r)<\operatorname{Nm}(b)$.
+\end{definition}
+
+\begin{proposition}[13.1.4]
+Every Euclidean domain is a PID.
+\end{proposition}
+
+\begin{definition}[13.2.1]
+\begin{enumerate}
+\item For $a,b\in R$, $a\mid b$ if $b=ac$ for some $c$.
+\item A nonzero $p\in R$ is prime if $(p)$ is a prime ideal.
+\item A nonzero non-unit $r$ is irreducible if $r=ab$ implies $a$ or $b$ is a unit.
+\item $a,b$ are associated if $a=bu$ for a unit $u$.
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[13.2.2]
+\begin{enumerate}
+\item Prime elements are irreducible.
+\item In a PID, irreducible elements are prime.
+\end{enumerate}
+\end{proposition}
+
+\begin{definition}[13.2.3]
+A unique factorization domain (UFD) is an integral domain where every nonzero non-unit is a product of irreducibles, and this factorization is unique up to order and associates.
+\end{definition}
+
+\begin{proposition}[13.2.6]
+In a UFD, an element is prime iff it is irreducible.
+\end{proposition}
+
+\begin{proposition}[13.2.7]
+In a UFD, gcd exists and is unique up to associates.
+\end{proposition}
+
+\begin{theorem}[13.3.1]
+Every PID is a UFD.
+\end{theorem}
+
+\section{UFD Properties of Polynomial Rings (Section 14)}
+
+\begin{theorem}[14.1.1]
+An integral domain $R$ is a UFD iff $R[x]$ is a UFD.
+\end{theorem}
+
+\begin{corollary}[14.1.2]
+If $R$ is a UFD, then $R[x_1,\dots,x_n]$ is a UFD.
+\end{corollary}
+
+\begin{lemma}[14.2.1 (Rational Root Test)]
+If $p(x)=a_nx^n+\cdots+a_0\in\mathbb{Z}[x]$ and $p(r/s)=0$ with $\gcd(r,s)=1$, then $r\mid a_0$ and $s\mid a_n$.
+\end{lemma}
+
+\begin{proposition}[14.2.3 (Eisenstein's Criterion)]
+Let $\mathfrak{p}$ be a prime ideal in an integral domain $R$, and $f(x)=x^n+c_{n-1}x^{n-1}+\cdots+c_0\in R[x]$. If $c_i\in\mathfrak{p}$ for all $i$ and $c_0\notin\mathfrak{p}^2$, then $f$ is irreducible.
+\end{proposition}
+
+\begin{lemma}[14.3.1]
+Let $F$ be a field. A polynomial $f(x)\in F[x]$ is irreducible iff $F[x]/(f(x))$ is a field.
+\end{lemma}
+
+\begin{lemma}[14.3.3]
+If $f(x)=p_1(x)^{n_1}\cdots p_r(x)^{n_r}$ in $F[x]$, then
+\[
+F[x]/(f(x)) \cong \prod_{i=1}^r F[x]/(p_i(x)^{n_i}).
+\]
+\end{lemma}
+
+\begin{corollary}[14.3.5]
+If $F$ is a field, any finite subgroup of $F^\times$ is cyclic. In particular, finite fields have cyclic multiplicative groups.
+\end{corollary}
+
+\section{Modules and Classification over PIDs (Section 15)}
+
+\begin{definition}[15.1.1]
+Let $R$ be a ring. A left $R$-module is an abelian group $M$ with an action $R\times M\to M$ satisfying $1\cdot m=m$, $(r+s)\cdot m = r\cdot m+s\cdot m$, $r\cdot(m+n)=r\cdot m+r\cdot n$, and $r\cdot(s\cdot m)=(rs)\cdot m$.
+\end{definition}
+
+\begin{definition}[15.1.4]
+An $R$-module homomorphism $\phi:M\to N$ is additive and $R$-linear. $\ker\phi$ and $\operatorname{Im}\phi$ are submodules.
+\end{definition}
+
+\begin{definition}[15.2.1]
+Let $M$ be an $R$-module and $X\subseteq M$. The submodule generated by $X$ is $RX = \{\sum a_i x_i\}$. If $X$ is finite, $M$ is finitely generated. If $M=Rx$, it is cyclic. $M$ is free of rank $n$ if $M\cong R^{\oplus n}$.
+\end{definition}
+
+\begin{lemma}[15.3.1]
+If $R$ is an integral domain and $N$ is a free $R$-module of rank $n$, then any $n+1$ elements of $N$ are linearly dependent.
+\end{lemma}
+
+\begin{theorem}[15.3.2 (Structure of submodules of free modules over a PID)]
+Let $R$ be a PID, $N$ a free $R$-module of rank $n$, and $L$ a submodule. Then
+\begin{enumerate}
+\item $L$ is free of rank $\ell\le n$.
+\item There exists a basis $y_1,\dots,y_n$ of $N$ and nonzero $a_1,\dots,a_\ell\in R$ with $a_1\mid a_2\mid\cdots\mid a_\ell$ such that $a_1y_1,\dots,a_\ell y_\ell$ is a basis of $L$.
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[15.3.3 (Fundamental Theorem of Finitely Generated Modules over a PID)]
+Let $R$ be a PID and $M$ a finitely generated $R$-module. Then
+\[
+M \cong R^{\oplus r} \oplus R/(a_1) \oplus \cdots \oplus R/(a_m)
+\]
+with $a_1\mid a_2\mid\cdots\mid a_m$, and $r$ and the $a_i$ are unique up to associates.
+\end{theorem}
+
+\section{Field Extensions (Section 16)}
+
+\begin{definition}[16.1.1]
+The characteristic $\operatorname{char}(F)$ of a field $F$ is the smallest positive integer $p$ such that $p\cdot1=0$, or $0$ if no such integer exists.
+\end{definition}
+
+\begin{definition}[16.1.3]
+The prime field of $F$ is the smallest subfield containing $1_F$; it is $\mathbb{F}_p$ if $\operatorname{char}(F)=p>0$, or $\mathbb{Q}$ if $\operatorname{char}(F)=0$.
+\end{definition}
+
+\begin{definition}[16.2.2]
+The degree of a field extension $K/F$ is $[K:F]=\dim_F K$ (as an $F$-vector space). The extension is finite if this dimension is finite.
+\end{definition}
+
+\begin{theorem}[16.2.3 (Tower Law)]
+If $F\subseteq E\subseteq K$ are field extensions, then $[K:F]=[K:E][E:F]$.
+\end{theorem}
+
+\begin{lemma}[16.3.1]
+Any field homomorphism $\phi:F\to E$ is injective.
+\end{lemma}
+
+\begin{lemma}[16.3.3]
+If $p(x)\in F[x]$ is irreducible, then in $K=F[x]/(p(x))$, the element $\theta = x\bmod (p(x))$ satisfies $p(\theta)=0$.
+\end{lemma}
+
+\begin{definition}[16.3.5]
+Let $K/F$ be an extension. The subfield generated by $\alpha_1,\dots,\alpha_n\in K$ is $F(\alpha_1,\dots,\alpha_n)$. If $K=F(\alpha)$, it is a simple extension.
+\end{definition}
+
+\begin{theorem}[16.3.6]
+Let $K/F$ be an extension and $\alpha\in K$. Either
+\begin{enumerate}
+\item $1,\alpha,\alpha^2,\dots$ are linearly independent over $F$ (transcendental), then $F(\alpha)\cong F(x)$; or
+\item they are linearly dependent (algebraic), then there is a unique monic irreducible polynomial $m_{\alpha,F}(x)\in F[x]$ (the minimal polynomial) with $m_{\alpha,F}(\alpha)=0$, and $F(\alpha)\cong F[x]/(m_{\alpha,F}(x))$, $[F(\alpha):F]=\deg m_{\alpha,F}$.
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[16.4.2]
+For a field extension $K/F$, the following are equivalent:
+\begin{enumerate}
+\item $K/F$ is finite.
+\item $K$ is finitely generated and algebraic over $F$.
+\end{enumerate}
+\end{theorem}
+
+\begin{lemma}[16.4.4]
+If $K/E/F$ are extensions and $\alpha\in K$, then $m_{\alpha,E}(x)\mid m_{\alpha,F}(x)$ in $E[x]$.
+\end{lemma}
+
+\begin{corollary}[16.4.5]
+$[E(\alpha):E]\le [F(\alpha):F]$.
+\end{corollary}
+
+\begin{definition}[16.4.6]
+The composite of intermediate fields $K_1,K_2$ is $K_1K_2$, the smallest field containing both.
+\end{definition}
+
+\begin{corollary}[16.4.8]
+If $K_1,K_2$ are finite over $F$, then $[K_1K_2:F]\le [K_1:F][K_2:F]$.
+\end{corollary}
+
+\begin{corollary}[16.4.10]
+If $\alpha,\beta$ are algebraic over $F$, then $\alpha\pm\beta$, $\alpha\beta$, and $\alpha/\beta$ (if $\beta\neq0$) are algebraic over $F$.
+\end{corollary}
+
+\begin{definition}[16.4.11]
+The algebraic closure of $F$ in $K$ is $\{\alpha\in K\mid \alpha\text{ algebraic over }F\}$, which is a subfield.
+\end{definition}
+
+\begin{theorem}[16.4.13]
+If $L/K$ and $K/F$ are algebraic, then $L/F$ is algebraic.
+\end{theorem}
+
+\section{Normal Extensions (Section 17)}
+
+\begin{definition}[17.1.1]
+A splitting field of $f(x)\in F[x]$ is an extension $K/F$ such that $f$ splits completely in $K$ and $K$ is generated by the roots of $f$.
+\end{definition}
+
+\begin{theorem}[17.1.3]
+For any field $F$ and $f(x)\in F[x]$ of degree $n$, a splitting field exists and $[K:F]\le n!$.
+\end{theorem}
+
+\begin{lemma}[17.2.1]
+If $\eta:F\cong F'$ is an isomorphism and $p(x)\in F[x]$ irreducible, then $\eta$ induces an isomorphism $F[x]/(p(x)) \cong F'[x]/(\eta(p)(x))$.
+\end{lemma}
+
+\begin{proposition}[17.2.3]
+Let $\eta:F\cong F'$ and $f(x)\in F[x]$, $f'(x)=\eta(f)(x)$. If $E$ is a splitting field of $f$ over $F$ and $E'$ a splitting field of $f'$ over $F'$, then $\eta$ extends to an isomorphism $E\cong E'$.
+\end{proposition}
+
+\begin{definition}[17.3.1]
+An algebraic extension $K/F$ is normal if every irreducible polynomial in $F[x]$ that has a root in $K$ splits completely in $K$.
+\end{definition}
+
+\begin{theorem}[17.3.2]
+A finite extension $K/F$ is normal iff it is the splitting field of some polynomial in $F[x]$.
+\end{theorem}
+
+\begin{corollary}[17.3.3]
+If $K/F$ is finite and normal, then for any intermediate field $E$, $K/E$ is normal.
+\end{corollary}
+
+\begin{definition}[17.3.4]
+A normal closure of a finite extension $K/F$ is a minimal normal extension of $F$ containing $K$.
+\end{definition}
+
+\begin{lemma}[17.3.5]
+A normal closure exists and is unique up to isomorphism.
+\end{lemma}
+
+\begin{definition}[17.4.1]
+In characteristic $p>0$, the Frobenius endomorphism $\sigma_F:F\to F$ is $\sigma(x)=x^p$. $F$ is perfect if $\sigma_F$ is an isomorphism.
+\end{definition}
+
+\begin{proposition}[17.4.3]
+Algebraic extensions of perfect fields are perfect.
+\end{proposition}
+
+\section{Separable Extensions and Finite Fields (Section 18)}
+
+\begin{definition}[18.1.1]
+For $f(x)=a_0+\cdots+a_nx^n\in F[x]$, the formal derivative is $D(f)(x)=a_1+2a_2x+\cdots+na_nx^{n-1}$.
+\end{definition}
+
+\begin{theorem}[18.1.2]
+$f(x)$ has no repeated roots in its splitting field iff $(f(x),D(f)(x))=1$ in $F[x]$.
+\end{theorem}
+
+\begin{corollary}[18.1.3]
+If $f$ is irreducible, then $f$ has repeated roots iff $D(f)(x)=0$.
+\end{corollary}
+
+\begin{definition}[18.1.4]
+An irreducible polynomial is separable if it has no repeated roots; otherwise it is inseparable.
+\end{definition}
+
+\begin{corollary}[18.1.5]
+In characteristic $0$, all irreducible polynomials are separable.
+\end{corollary}
+
+\begin{corollary}[18.1.6]
+If $\operatorname{char}(F)=p>0$ and $f$ is inseparable, then $f(x)=g(x^p)$ for some irreducible $g$. This can happen only if $F$ is imperfect.
+\end{corollary}
+
+\begin{corollary}[18.1.7]
+If $\operatorname{char}(F)=p>0$ and $f$ irreducible, then $f(x)=g(x^{p^e})$ with $g$ separable irreducible, and $f$ has $\deg g$ distinct roots.
+\end{corollary}
+
+\begin{definition}[18.2.1]
+An element $\alpha$ algebraic over $F$ is separable if its minimal polynomial is separable. An extension $K/F$ is separable if every element of $K$ is separable over $F$.
+\end{definition}
+
+\begin{lemma}[18.2.6]
+If $K=F(\alpha)$ and $m_{\alpha,F}(x)=g(x^{p^e})$ with $g$ separable irreducible, then
+\[
+\#\operatorname{Hom}_F(F(\alpha),M) = \deg g \le [F(\alpha):F],
+\]
+with equality iff $\alpha$ is separable.
+\end{lemma}
+
+\begin{corollary}[18.2.8]
+Let $K/F$ be finite and $M$ a normal extension containing $K$. Then
+\[
+\#\operatorname{Hom}_F(K,M) \le [K:F].
+\]
+Equality holds iff $K/F$ is separable (equivalently, $K$ is generated over $F$ by separable elements).
+\end{corollary}
+
+\begin{theorem}[18.2.3]
+\begin{enumerate}
+\item If $\alpha$ is separable over $F$, then $F(\alpha)/F$ is separable.
+\item If $L/K$ and $K/F$ are separable, then $L/F$ is separable.
+\end{enumerate}
+\end{theorem}
+
+\begin{definition}[18.2.10]
+For a finite extension $K/F$, define $K^s = \{\alpha\in K\mid \alpha\text{ separable over }F\}$ (the maximal separable subextension). Then $[K:F]_{\text{sep}} = [K^s:F]$ and $[K:F]_{\text{insep}} = [K:K^s]$.
+\end{definition}
+
+\begin{theorem}[18.3.1 (Primitive Element Theorem)]
+A finite separable extension is generated by one element.
+\end{theorem}
+
+\begin{theorem}[18.4.1]
+\begin{enumerate}
+\item If $F$ is a finite field, then $\operatorname{char}(F)=p$ and $|F|=p^n$ for some $n$.
+\item For each prime power $p^n$, there exists a field $\mathbb{F}_{p^n}$ of $p^n$ elements, unique up to isomorphism; it is the splitting field of $x^{p^n}-x$ over $\mathbb{F}_p$.
+\end{enumerate}
+\end{theorem}
+
+\begin{lemma}[18.4.3]
+\begin{enumerate}
+\item $\mathbb{F}_{p^m}\subseteq \mathbb{F}_{p^n}$ iff $m\mid n$, and the inclusion is unique.
+\item $\mathbb{F}_{p^n} = \mathbb{F}_p(\alpha)$ for some $\alpha$ with minimal polynomial of degree $n$.
+\end{enumerate}
+\end{lemma}
+
+
+
+
+% --- optional vertical filler to balance columns ---
+%\vfill\null
+
+% ----------------------------------------------------------
+%  HW answer
+% ----------------------------------------------------------
+
+
+
+
+\section*{Homework 3}
+
+\noindent\textbf{Problem 1.} Prove that every group of order \(5\cdot7\cdot47\) is cyclic.
+
+\textit{Proof.} Let \(|G| = 5\cdot7\cdot47\). By Sylow's Third Theorem, the number of Sylow \(p\)-subgroups, denoted \(n_p\), satisfies \(n_p\equiv 1\pmod p\) and \(n_p\mid \frac{|G|}{p}\). 
+\begin{itemize}
+\item For \(p=47\): \(n_{47}\equiv1\pmod{47}\) and \(n_{47}\mid35\). The only divisor of \(35\) that is \(1\) mod \(47\) is \(1\). So \(n_{47}=1\).
+\item For \(p=7\): \(n_7\equiv1\pmod7\) and \(n_7\mid235\). Divisors of \(235\) are \(1,5,47,235\). None of \(5,47,235\) are \(1\) mod \(7\). So \(n_7=1\).
+\item For \(p=5\): \(n_5\equiv1\pmod5\) and \(n_5\mid329\). Divisors of \(329\) are \(1,7,47,329\). None of \(7,47,329\) are \(1\) mod \(5\). So \(n_5=1\).
+\end{itemize}
+Since all Sylow subgroups are normal and have pairwise coprime orders, \(G\) is isomorphic to their direct product: \(G\cong P_5\times P_7\times P_{47}\). Each Sylow subgroup is of prime order, hence cyclic. The direct product of cyclic groups of pairwise coprime orders is cyclic. Therefore \(G\cong\mathbb{Z}/5\times\mathbb{Z}/7\times\mathbb{Z}/47\cong\mathbb{Z}/1645\), which is cyclic.
+
+\noindent\textbf{Problem 2.} Let \(P\in\operatorname{Syl}_p(G)\) and assume \(N\trianglelefteq G\). Prove that \(P\cap N\) is a Sylow \(p\)-subgroup of \(N\). Deduce that \(PN/N\) is a Sylow \(p\)-subgroup of \(G/N\).
+
+\textit{Proof.} Let \(|G|=p^km\) with \(\gcd(p,m)=1\). Then \(|P|=p^k\). Let \(|N|=p^ab\) with \(\gcd(p,b)=1\) and \(a\le k\). Then \(P\cap N\) is a \(p\)-subgroup of \(N\). By Sylow's First Theorem, \(P\cap N\) is contained in some Sylow \(p\)-subgroup \(Q\) of \(N\); thus \(|Q|=p^a\). Since \(Q\) is a \(p\)-subgroup of \(G\), it is contained in some conjugate of \(P\); by Sylow's Second Theorem, \(Q\le gPg^{-1}\) for some \(g\in G\). Because \(N\trianglelefteq G\), \(g^{-1}Qg\le N\). Also \(g^{-1}Qg\le P\). Hence \(g^{-1}Qg\le P\cap N\). Conjugation preserves order, so \(|P\cap N|\ge p^a\). But \(P\cap N\le N\) implies \(|P\cap N|\le p^a\). Thus \(|P\cap N|=p^a\), so \(P\cap N\) is a Sylow \(p\)-subgroup of \(N\).
+
+By the Second Isomorphism Theorem, \(PN/N\cong P/(P\cap N)\). Then \(|PN/N|=\frac{|P|}{|P\cap N|}=p^{k-a}\). The order of \(G/N\) is \(\frac{|G|}{|N|}=p^{k-a}\frac{m}{b}\) with \(\gcd(p,\frac{m}{b})=1\). Hence \(PN/N\) is a Sylow \(p\)-subgroup of \(G/N\).
+
+\noindent\textbf{Problem 3.} Prove that a finite group \(G\) is nilpotent if and only if whenever \(a,b\in G\) with \(\gcd(|a|,|b|)=1\) then \(ab=ba\).
+
+\textit{Proof.} \((\Rightarrow)\) Suppose \(G\) is nilpotent. A finite nilpotent group is the direct product of its Sylow subgroups: \(G\cong P_{p_1}\times\cdots\times P_{p_k}\). If \(\gcd(|a|,|b|)=1\), then the non‑identity coordinates of \(a\) and \(b\) lie in disjoint sets of Sylow factors, and elements from distinct factors commute. Hence \(ab=ba\).
+
+\((\Leftarrow)\) Suppose elements of coprime order commute. Let \(P\) be a Sylow \(p\)-subgroup and \(x\in P\). For any prime \(q\neq p\), let \(Q\) be a Sylow \(q\)-subgroup and \(y\in Q\). Since \(|x|\) is a power of \(p\) and \(|y|\) a power of \(q\), \(\gcd(|x|,|y|)=1\); by hypothesis \(xy=yx\). Thus \(P\) commutes pointwise with every other Sylow subgroup. It follows that \(P\) is normalized by the subgroup generated by all Sylow subgroups, which is \(G\) itself. Hence every Sylow subgroup is normal. A finite group with all Sylow subgroups normal is the direct product of them, hence nilpotent.
+
+\noindent\textbf{Problem 4.} Let \(P\) be a group of order \(p^a\) and \(H\) a normal subgroup of \(P\) of order \(p^b\). Then for every \(c\in\{0,1,\dots,b\}\), \(H\) contains a subgroup of order \(p^c\) that is normal in \(P\).
+
+\textit{Proof.} We use induction on \(b\). The case \(b=0\) is trivial. Assume the claim holds for normal subgroups of order \(p^k\) with \(k<b\). Since \(H\trianglelefteq P\) and \(H\neq1\), we have \(H\cap Z(P)\neq1\). By Cauchy's theorem, there exists \(z\in H\cap Z(P)\) of order \(p\). Let \(Z_1=\langle z\rangle\); then \(Z_1\trianglelefteq P\), \(Z_1\le H\), and \(|Z_1|=p\). This gives the case \(c=1\).
+
+For \(c>1\), consider \(P/Z_1\). Since \(Z_1\le H\trianglelefteq P\), we have \(H/Z_1\trianglelefteq P/Z_1\) and \(|H/Z_1|=p^{b-1}\). By the induction hypothesis, \(H/Z_1\) contains a subgroup \(\overline{K}\trianglelefteq P/Z_1\) of order \(p^{c-1}\). By the Lattice Isomorphism Theorem, \(\overline{K}=K/Z_1\) for some subgroup \(K\le H\) containing \(Z_1\). Then \(|K|=p^{c-1}\cdot p=p^c\) and \(K\trianglelefteq P\). 
+
+\noindent\textbf{Problem 5.} Let \(\rho:G\to GL(V)\) be a representation of a finite group \(G\) of dimension \(d\). Let \(\chi_\rho:G\to\mathbb{C}\) be its character. Show that for every \(g\in G\), \(|\chi_\rho(g)|\le d\). Moreover, show that \(\chi_\rho(g)=d\) if and only if \(g\in\ker\rho\).
+
+\textit{Proof.} Since \(G\) is finite, \(g\) has finite order \(m\). Then \(\rho(g)^m=I_d\), so \(\rho(g)\) is diagonalizable and its eigenvalues \(\lambda_1,\dots,\lambda_d\) are roots of unity, hence \(|\lambda_i|=1\). Then \(|\chi_\rho(g)|=|\sum\lambda_i|\le\sum|\lambda_i|=d\).
+
+If \(\chi_\rho(g)=d\), then \(\sum\lambda_i=d\). Because each \(|\lambda_i|=1\), this forces \(\lambda_i=1\) for all \(i\); thus \(\rho(g)=I_d\), i.e., \(g\in\ker\rho\). Conversely, if \(g\in\ker\rho\), then \(\rho(g)=I_d\) and its trace is \(d\).
+
+\noindent\textbf{Problem 6.} Let \((\rho,V=\mathbb{C}^n)\) be a \(\mathbb{C}\)-representation of \(G\) and let \(z\in Z(G)\) be central.
+
+\begin{enumerate}
+\item Show that for each \(g\in G\), \(\rho(g)\) is diagonalizable in \(GL_n(\mathbb{C})\).
+\item If \(\lambda\) is an eigenvalue of \(\rho(z)\), then the subspace \(V^{\rho(z)=\lambda}=\{v\in V\mid \rho(z)v=\lambda v\}\) is a subrepresentation.
+\item Show that if \(V\) is irreducible, then for every \(z\in Z(G)\), \(\rho(z)\) is a scalar matrix.
+\end{enumerate}
+
+\textit{Proof.}
+\begin{enumerate}
+\item The element \(g\) has finite order, so \(\rho(g)^m=I_n\). The polynomial \(x^m-1\) annihilates \(\rho(g)\) and has no repeated roots; therefore \(\rho(g)\) is diagonalizable.
+\item Let \(v\in V^{\rho(z)=\lambda}\) and \(g\in G\). Since \(z\) is central, \(\rho(z)\rho(g)=\rho(g)\rho(z)\). Then \(\rho(z)(\rho(g)v)=\rho(g)(\rho(z)v)=\rho(g)(\lambda v)=\lambda(\rho(g)v)\). Hence \(\rho(g)v\) is also an eigenvector for \(\lambda\), so the subspace is \(G\)-invariant.
+\item For an irreducible \(V\), the eigenspace \(V^{\rho(z)=\lambda}\) is non‑zero (pick any eigenvalue) and is a subrepresentation, so it must equal \(V\). Thus \(\rho(z)v=\lambda v\) for all \(v\in V\), i.e., \(\rho(z)=\lambda I_n\).
+\end{enumerate}
+
+\noindent\textbf{Problem 7.} Let \(V\) be a \(\mathbb{C}\)-vector space. Then \(V\otimes V = \operatorname{Sym}^2(V)\oplus\Lambda^2(V)\), where \(\operatorname{Sym}^2(V)\) is spanned by \(v\otimes w+w\otimes v\) and \(\Lambda^2(V)\) by \(v\otimes w-w\otimes v\).
+
+\begin{enumerate}
+\item If \(V\) is a representation of \(G\), show that both \(\operatorname{Sym}^2(V)\) and \(\Lambda^2(V)\) are subrepresentations of \(V\otimes V\).
+\item Show the character identities:
+\[
+\chi_{\operatorname{Sym}^2(V)}(g)=\frac12\bigl(\chi_V(g)^2+\chi_V(g^2)\bigr),\qquad
+\chi_{\Lambda^2(V)}(g)=\frac12\bigl(\chi_V(g)^2-\chi_V(g^2)\bigr).
+\]
+\end{enumerate}
+
+\textit{Proof.}
+\begin{enumerate}
+\item Define \(\theta:V\otimes V\to V\otimes V\) by \(\theta(v\otimes w)=w\otimes v\). Then \(\theta\) commutes with the \(G\)-action because \(g\cdot\theta(v\otimes w)=gw\otimes gv=\theta(gv\otimes gw)=\theta(g\cdot(v\otimes w))\). The \(+1\) eigenspace of \(\theta\) is \(\operatorname{Sym}^2(V)\) and the \(-1\) eigenspace is \(\Lambda^2(V)\); both are \(G\)-invariant.
+\item Choose a basis \(e_1,\dots,e_n\) of eigenvectors of \(g\) with eigenvalues \(\lambda_i\). Then \(\chi_V(g)=\sum\lambda_i\), \(\chi_V(g^2)=\sum\lambda_i^2\). The eigenvalues on \(\operatorname{Sym}^2(V)\) are \(\lambda_i\lambda_j\) for \(i\le j\), and on \(\Lambda^2(V)\) for \(i<j\). Hence
+\[
+\chi_{\operatorname{Sym}^2(V)}(g)=\sum_{i\le j}\lambda_i\lambda_j,\qquad
+\chi_{\Lambda^2(V)}(g)=\sum_{i<j}\lambda_i\lambda_j.
+\]
+Now \((\sum\lambda_i)^2=\sum\lambda_i^2+2\sum_{i<j}\lambda_i\lambda_j\). Adding \(\sum\lambda_i^2\) gives the first formula, subtracting gives the second.
+\end{enumerate}
+
+\noindent\textbf{Problem 8.} Let \(G\) act on a finite set \(X\). This induces a representation on \(V=\mathbb{C}[X]=\{\sum a_x[x]\mid a_x\in\mathbb{C}\}\). Show that for each \(g\in G\), \(\chi_V(g)=|\{x\in X\mid gx=x\}|\).
+
+\textit{Proof.} The basis \(\{ [x]\}_{x\in X}\) is permuted by \(g\): \(g\cdot[x]=[gx]\). The matrix of \(g\) in this basis has entry \(1\) at \((x,x)\) if and only if \(gx=x\); otherwise the diagonal entry is \(0\). Hence the trace equals the number of fixed points.
+
+\noindent\textbf{Problem 9.} Let \(H\le G\) be a finite group, \((\rho,V)\) a representation of \(H\). The induced representation \(\operatorname{Ind}_H^G V\) is defined as \(\{f:G\to V\mid f(hg)=\rho(h)f(g)\ \forall h\in H,g\in G\}\) with \((g\cdot f)(x)=f(xg)\).
+
+\begin{enumerate}
+\item Show that \(\operatorname{Ind}_H^G V\) is finite‑dimensional; what is its dimension?
+\item Show that \(\chi_{\operatorname{Ind}_H^G\rho}(g)=\frac1{|H|}\sum_{x\in G,\ x^{-1}gx\in H}\chi_\rho(x^{-1}gx)\).
+\end{enumerate}
+
+\textit{Proof.}
+\begin{enumerate}
+\item Let \(G=\bigsqcup_{i=1}^k Hc_i\) with \(k=[G:H]\). Any \(f\) is determined by its values on the coset representatives. For each \(i\), choose any \(v_i\in V\) and set \(f(c_i)=v_i\); then extend by \(f(hc_i)=\rho(h)v_i\). This gives an isomorphism \(\operatorname{Ind}_H^G V\cong V^{\oplus k}\). Hence \(\dim\operatorname{Ind}_H^G V=[G:H]\dim V\).
+\item Decompose \(\operatorname{Ind}_H^G V=\bigoplus_{i=1}^k W_i\) where \(W_i=\{f\mid f(x)=0\text{ for }x\notin Hc_i\}\). Each \(W_i\cong V\). For a given \(g\), the action maps \(W_i\) to \(W_j\) where \(Hc_i g=Hc_j\). The trace gets contributions only from those \(i\) with \(Hc_i g=Hc_i\), i.e., \(c_i g c_i^{-1}\in H\). On such a block, the action corresponds to \(\rho(c_i g c_i^{-1})\) on \(V\), whose trace is \(\chi_\rho(c_i g c_i^{-1})\). Summing over these \(i\) and then averaging over the \(|H|\) elements in each coset yields the given formula.
+\end{enumerate}
+
+\noindent\textbf{Problem 10.} Let \((\rho_1,V_1)\), \((\rho_2,V_2)\) be representations of \(G\). Define a representation on \(W=\operatorname{Hom}_{\mathbb{C}}(V_1,V_2)\) by \((\rho(g)f)(v)=\rho_2(g)(f(\rho_1(g^{-1})v))\). Show that this gives a representation and its character is \(\chi_{\rho_1^*}\chi_{\rho_2}\).
+
+\textit{Proof.} One verifies \(\rho(g_1g_2)=\rho(g_1)\rho(g_2)\). The natural isomorphism \(\operatorname{Hom}(V_1,V_2)\cong V_1^*\otimes V_2\) intertwines the actions: \(g\cdot(\varphi\otimes v)=(\varphi\circ\rho_1(g)^{-1})\otimes\rho_2(g)v\). Hence the character is \(\chi_{V_1^*}(g)\chi_{V_2}(g)=\overline{\chi_{V_1}(g)}\chi_{V_2}(g)=\chi_{\rho_1^*}(g)\chi_{\rho_2}(g)\).
+
+\section*{Homework 4}
+
+\noindent\textbf{Problem 1.} Consider the ring of Gaussian integers \(\mathbb{Z}[i]=\{a+bi\mid a,b\in\mathbb{Z}\}\). Verify that \(\mathbb{Z}[i]/(3+i)\cong\mathbb{Z}/10\mathbb{Z}\).
+
+\textit{Proof.} Since \(10=(3+i)(3-i)\in(3+i)\), we have \((10)\subseteq(3+i)\). Define \(\phi:\mathbb{Z}\to\mathbb{Z}[i]/(3+i)\) by \(\phi(n)=n+(3+i)\). If \(n\in\ker\phi\), then \(n=(3+i)(x+yi)\) for some \(x,y\in\mathbb{Z}\). Expanding gives \(n=(3x-y)+(x+3y)i\); the imaginary part forces \(x=-3y\), so \(n=3(-3y)-y=-10y\). Thus \(\ker\phi=10\mathbb{Z}\). Surjectivity: in the quotient, \(i\equiv-3\), so any \(a+bi\equiv a-3b\in\mathbb{Z}\). Hence \(\phi\) is surjective, and the First Isomorphism Theorem gives \(\mathbb{Z}/10\mathbb{Z}\cong\mathbb{Z}[i]/(3+i)\). 
+
+\noindent\textbf{Problem 2.} Prove that a quotient of a PID by a prime ideal is a PID.
+
+\textit{Proof.} Let \(R\) be a PID and \(P\) a prime ideal. If \(P=(0)\), then \(R/P\cong R\) is a PID. If \(P\neq(0)\), then in a PID every nonzero prime ideal is maximal, so \(R/P\) is a field. Fields are trivially PIDs.
+
+\noindent\textbf{Problem 3.} A commutative ring \(R\) is called a \emph{local ring} if it has a unique maximal ideal. Prove that if \(R\) is a local ring with maximal ideal \(\mathfrak{m}\) then every element of \(R\setminus\mathfrak{m}\) is a unit. Conversely, if \(R\) is commutative and the set of non‑units forms an ideal \(I\), then \(R\) is local with unique maximal ideal \(I\).
+
+\textit{Proof.} Assume \(R\) is local with maximal ideal \(\mathfrak{m}\). For any \(x\notin\mathfrak{m}\), the ideal \((x)\) is not contained in \(\mathfrak{m}\); since every proper ideal is contained in some maximal ideal (here \(\mathfrak{m}\) is the only one), \((x)\) cannot be proper, so \((x)=R\) and \(x\) is a unit.
+
+Conversely, let \(I\) be the set of non‑units. Then \(1\notin I\), so \(I\) is proper. Any proper ideal consists of non‑units, hence is contained in \(I\). Thus \(I\) is maximal and unique.
+
+\noindent\textbf{Problem 4.} Determine whether the following polynomials are irreducible in the rings indicated. For those reducible, factor into irreducibles.
+\begin{enumerate}
+\item \(x^{2}+x+1\) in \(\mathbb{F}_3[x]\).
+\item \(x^{3}+x+1\) in \(\mathbb{F}_3[x]\).
+\item \(x^{4}+1\) in \(\mathbb{F}_5[x]\).
+\item \(x^{4}+10x^{2}+1\) in \(\mathbb{Z}[x]\).
+\end{enumerate}
+
+\textit{Solution.}
+\begin{enumerate}
+\item Reducible: \((x+2)^2\).
+\item Reducible: \((x+2)(x^{2}+x+2)\).
+\item Reducible: \((x^{2}+2)(x^{2}+3)\).
+\item Irreducible.
+\end{enumerate}
+
+\noindent\textbf{Problem 5.} An integral domain \(R\) where every ideal generated by two elements is principal is called a \emph{Bézout domain}.
+\begin{enumerate}
+\item Prove that \(R\) is a Bézout domain iff every pair \(a,b\) has a gcd \(d\) that can be written as \(d=ax+by\).
+\item Prove that every finitely generated ideal of a Bézout domain is principal.
+\item Let \(F\) be the fraction field of \(R\). Prove that every element of \(F\) can be written as \(a/b\) with \(\gcd(a,b)=1\).
+\item Prove that \(R\) is a PID iff \(R\) is a UFD and a Bézout domain.
+\end{enumerate}
+
+\textit{Proof.}
+\begin{enumerate}
+\item \((\Rightarrow)\) If \((a,b)=(d)\), then \(d=ax+by\) and \(d\mid a,b\). If \(c\mid a,b\) then \((a,b)\subseteq(c)\), so \(d\in(c)\) and \(c\mid d\). \((\Leftarrow)\) If a gcd \(d=ax+by\) exists, then \((d)\subseteq(a,b)\) and clearly \((a,b)\subseteq(d)\), hence \((a,b)=(d)\).
+\item Induction: \((a_1,\dots,a_n)=((a_1,\dots,a_{n-1}),a_n)=(d,a_n)\) which is principal by the two‑generator property.
+\item Write \(\alpha=u/v\). Let \(d=\gcd(u,v)=ux+vy\). Write \(u=ad\), \(v=bd\). Then \(\alpha=a/b\). If \(c\mid a,b\) then \(cd\mid u,v\) so \(cd\mid d\); thus \(c\) is a unit, so \(\gcd(a,b)=1\).
+\item A PID is a UFD and Bézout. Conversely, let \(R\) be a UFD and Bézout. Take a nonzero ideal \(I\). Pick \(a_1\in I\). If \((a_1)\neq I\), choose \(a_2\in I\setminus(a_1)\). Then \((a_1,a_2)=(d_2)\) gives a proper divisor of \(a_1\). Since factorisation in a UFD is finite, this process terminates, giving \(I=(d_m)\). 
+\end{enumerate}
+
+\noindent\textbf{Problem 6.} Let \(\phi:R\to S\) be a homomorphism of commutative rings.
+\begin{enumerate}
+\item Prove that if \(P\) is prime in \(S\) then \(\phi^{-1}(P)\) is prime in \(R\).
+\item Prove that if \(M\) is maximal in \(S\) and \(\phi\) is surjective then \(\phi^{-1}(M)\) is maximal in \(R\). Give an example where surjectivity fails.
+\end{enumerate}
+
+\textit{Proof.}
+\begin{enumerate}
+\item If \(ab\in\phi^{-1}(P)\), then \(\phi(a)\phi(b)\in P\); since \(P\) is prime, \(\phi(a)\in P\) or \(\phi(b)\in P\), so \(a\in\phi^{-1}(P)\) or \(b\in\phi^{-1}(P)\). Also \(1_R\notin\phi^{-1}(P)\) because \(1_S\notin P\).
+\item By the isomorphism theorems, \(S\cong R/\ker\phi\). The lattice correspondence gives a bijection between ideals of \(R\) containing \(\ker\phi\) and ideals of \(S\). Since \(M\) is maximal in \(S\), its preimage is maximal among ideals containing \(\ker\phi\); any ideal strictly containing \(\phi^{-1}(M)\) would map to an ideal strictly containing \(M\), contradiction. Counterexample: inclusion \(\mathbb{Z}\hookrightarrow\mathbb{Q}\); \((0)\) is maximal in \(\mathbb{Q}\) but its preimage \((0)\) is not maximal in \(\mathbb{Z}\). 
+\end{enumerate}
+
+\noindent\textbf{Problem 7.} Let \(F\) be a field and \(f(x)=a_nx^n+\cdots+a_0\in F[x]\) with \(a_n\neq0\). Define the reverse polynomial \(g(x)=x^nf(1/x)\).
+\begin{enumerate}
+\item Describe the coefficients of \(g\).
+\item If \(a_0\neq0\), prove that \(f\) is irreducible iff \(g\) is irreducible.
+\end{enumerate}
+
+\textit{Proof.}
+\begin{enumerate}
+\item \(g(x)=a_0x^n+a_1x^{n-1}+\cdots+a_n\).
+\item Let \(\operatorname{rev}_d(h)(x)=x^dh(1/x)\). If \(f=uv\) with \(\deg u=r,\ \deg v=s\ge1\), then \(g=\operatorname{rev}_r(u)\operatorname{rev}_s(v)\). Conversely, if \(g=uv\) nontrivially, then \(f=\operatorname{rev}_n(g)=\operatorname{rev}_r(u)\operatorname{rev}_s(v)\) gives a nontrivial factorisation. 
+\end{enumerate}
+
+\noindent\textbf{Problem 8.} Let \(R=\mathbb{Z}[\sqrt{-5}]\). Define ideals
+\[
+I_2=(2,1+\sqrt{-5}),\quad I_3=(3,2+\sqrt{-5}),\quad I_3'=(3,2-\sqrt{-5}).
+\]
+\begin{enumerate}
+\item Prove each \(I_2,I_3,I_3'\) is non‑principal.
+\item Show \(I_2^2=(2)\).
+\item Show \(I_2I_3=(1-\sqrt{-5})\) and \(I_2I_3'=(1+\sqrt{-5})\). Deduce \((6)=I_2^2I_3I_3'\).
+\end{enumerate}
+
+\textit{Proof.}
+\begin{enumerate}
+\item Use the norm \(N(a+b\sqrt{-5})=a^2+5b^2\). For \(I_2\), if \(I_2=(\alpha)\) then \(\alpha\mid2,\alpha\mid1+\sqrt{-5}\) so \(N(\alpha)\mid\gcd(4,6)=2\). \(N(\alpha)=1\) would give \(I_2=R\), impossible because the image of \(I_2\) under the map \(a+b\sqrt{-5}\mapsto a+b\pmod2\) is \(0\). \(N(\alpha)=2\) has no integer solutions. Similar arguments for \(I_3,I_3'\).
+\item \(I_2^2=(4,2+2\sqrt{-5},-4+2\sqrt{-5})\). Every generator is divisible by \(2\), so \(I_2^2\subseteq(2)\). Also \(2=6-4\in I_2^2\) because \(6=(2+2\sqrt{-5})-(-4+2\sqrt{-5})\) and \(4\in I_2^2\). Hence \((2)\subseteq I_2^2\).
+\item Compute \(I_2I_3=(6,4+2\sqrt{-5},3+3\sqrt{-5},-3+3\sqrt{-5})\). Each generator is a multiple of \(1-\sqrt{-5}\), so \(I_2I_3\subseteq(1-\sqrt{-5})\). Conversely, \(1-\sqrt{-5}=(3+3\sqrt{-5})-(4+2\sqrt{-5})\in I_2I_3\). Similarly for \(I_2I_3'\). Then
+\[
+I_2^2I_3I_3'=(2)(1-\sqrt{-5})(1+\sqrt{-5})=(2)(6)=(6).
+\]
+\end{enumerate}
+
+\noindent\textbf{Problem 9.} Let \(M\) be an \(R\)-module, \(N\) a submodule. Prove that if \(M/N\) and \(N\) are finitely generated, then \(M\) is finitely generated.
+
+\textit{Proof.} Let \(\bar{x}_1,\dots,\bar{x}_k\) generate \(M/N\) with lifts \(x_i\in M\), and let \(y_1,\dots,y_\ell\) generate \(N\). For any \(m\in M\), write \(m+N=\sum r_i\bar{x}_i\) so that \(m-\sum r_ix_i\in N\). Hence \(m=\sum r_ix_i+\sum s_jy_j\). Thus \(\{x_i,y_j\}\) generate \(M\). 
+
+\noindent\textbf{Problem 10.} Let \(f:A\to B\) and \(g:B\to A\) be \(R\)-module homomorphisms with \(g\circ f=1_A\). Show that \(B=\operatorname{Im}f\oplus\ker g\).
+
+\textit{Proof.} If \(x\in\operatorname{Im}f\cap\ker g\), then \(x=f(a)\) and \(g(x)=0\). Then \(0=g(f(a))=a\), so \(x=0\). For any \(b\in B\), write \(b=f(g(b))+(b-f(g(b)))\). Clearly \(f(g(b))\in\operatorname{Im}f\) and \(g(b-f(g(b)))=g(b)-g(b)=0\). Hence \(B=\operatorname{Im}f+\ker g\), and the sum is direct. 
+
+\section*{Homework 5}
+
+\noindent\textbf{Problem 1.}
+\begin{enumerate}
+\item Show that \(x^3-2x-2\) is irreducible over \(\mathbb{Q}\).
+\item Let \(K=\mathbb{Q}[x]/(x^3-2x-2)\) and \(\theta\) the image of \(x\). Show that \(\{1,\theta,\theta^2\}\) is a \(\mathbb{Q}\)-basis of \(K\).
+\item Compute \((1+\theta)(1+\theta+\theta^2)\) and \(\frac{1+\theta}{1+\theta+\theta^2}\) in \(K\).
+\end{enumerate}
+
+\textit{Solution.}
+\begin{enumerate}
+\item Possible rational roots \(\pm1,\pm2\) fail. Since cubic, irreducible.
+\item The polynomial is monic irreducible, hence the minimal polynomial of \(\theta\).
+\item \((1+\theta)(1+\theta+\theta^2)=3+4\theta+2\theta^2\) using \(\theta^3=2\theta+2\). The inverse of \(1+\theta+\theta^2\) is \(\frac53+\frac13\theta-\frac23\theta^2\) (solving a linear system). Then \(\frac{1+\theta}{1+\theta+\theta^2}=\frac13+\frac23\theta-\frac13\theta^2\). 
+\end{enumerate}
+
+\noindent\textbf{Problem 2.} Find a basis of the extensions:
+\begin{enumerate}
+\item \(\mathbb{Q}(\sqrt2,\sqrt3)\).
+\item \(\mathbb{Q}(\sqrt3,\sqrt{-1},\omega)\) with \(\omega=\frac12(-1+\sqrt{-3})\).
+\end{enumerate}
+
+\textit{Solution.}
+\begin{enumerate}
+\item \(\{1,\sqrt2,\sqrt3,\sqrt6\}\).
+\item Note \(\omega=\frac12(-1+\sqrt{-3})\), so \(\sqrt{-3}=2\omega+1\) and \(\sqrt{-1}=i\). Then \(\mathbb{Q}(\sqrt3,i,\omega)=\mathbb{Q}(\sqrt3,i)\). A basis: \(\{1,\sqrt3,i,i\sqrt3\}\). 
+\end{enumerate}
+
+\noindent\textbf{Problem 3.} Prove that \(K_1=\mathbb{F}_{11}[x]/(x^2+1)\) and \(K_2=\mathbb{F}_{11}[y]/(y^2+2y+2)\) are fields with \(121\) elements, and the map sending \(p(\bar x)\) to \(p(\bar y+1)\) is an isomorphism.
+
+\textit{Proof.} \(-1\) is not a square in \(\mathbb{F}_{11}\); discriminant \(4-8=-4=7\) not a square. Hence both polynomials irreducible, giving quadratic extensions, so each has \(11^2=121\) elements. The map \(\phi(p(x))=p(y+1)\) sends \(x^2+1\) to \((y+1)^2+1=y^2+2y+2=0\), so \((x^2+1)\subseteq\ker\phi\). By maximality, \(\ker\phi=(x^2+1)\). Hence \(\phi\) induces an injective homomorphism between fields of the same finite cardinality, thus an isomorphism. 
+
+\noindent\textbf{Problem 4.} Prove \(\mathbb{Q}(\sqrt2+\sqrt3)=\mathbb{Q}(\sqrt2,\sqrt3)\). Conclude \([\mathbb{Q}(\sqrt2+\sqrt3):\mathbb{Q}]=4\) and find the minimal polynomial.
+
+\textit{Proof.} Let \(\alpha=\sqrt2+\sqrt3\). Then \(\alpha^{-1}=\sqrt3-\sqrt2\), so \(\sqrt2=\frac{\alpha-\alpha^{-1}}{2}\) and \(\sqrt3=\frac{\alpha+\alpha^{-1}}{2}\). Hence both lie in \(\mathbb{Q}(\alpha)\). Thus equality. Since \([\mathbb{Q}(\sqrt2,\sqrt3):\mathbb{Q}]=4\), the same holds for \(\alpha\). Compute \(\alpha^2=5+2\sqrt6\), then \((\alpha^2-5)^2=24\), so \(\alpha^4-10\alpha^2+1=0\). This polynomial is irreducible (degree 4), so it is the minimal polynomial.
+
+\noindent\textbf{Problem 5.} Let \(K/F\) be algebraic and \(R\) a ring with \(F\subseteq R\subseteq K\). Show that \(R\) is a subfield of \(K\).
+
+\textit{Proof.} For nonzero \(r\in R\), since \(r\) is algebraic over \(F\), there exists \(a_nr^n+\cdots+a_1r+a_0=0\) with \(a_0\neq0\). Then \(r(a_nr^{n-1}+\cdots+a_1)=-a_0\), so \(r^{-1}=-\frac1{a_0}(a_nr^{n-1}+\cdots+a_1)\in R\). 
+
+\noindent\textbf{Problem 6.} Prove that if \(K/F\) is algebraic and \(\sigma:K\to K\) is an \(F\)-homomorphism, then \(\sigma\) is an isomorphism.
+
+\textit{Proof.} \(\sigma\) is injective. For surjectivity, let \(\alpha\in K\) and let \(p(x)\) be its minimal polynomial over \(F\). The set \(S\) of roots of \(p\) in \(K\) is finite. \(\sigma\) maps \(S\) into \(S\) injectively, hence bijectively. Thus \(\alpha\in S=\sigma(S)\), so \(\alpha=\sigma(\beta)\) for some \(\beta\in K\). 
+
+\noindent\textbf{Problem 7.} If \(F\subseteq K\subseteq L\) and \(K/F\) and \(L/K\) are normal, is \(L/F\) normal? Give a counterexample.
+
+\textit{Solution.} Not in general. Example: \(F=\mathbb{Q}\), \(K=\mathbb{Q}(\sqrt2)\), \(L=\mathbb{Q}(\sqrt[4]{2})\). Then \(K/F\) is normal (splitting field of \(x^2-2\)), \(L/K\) is normal (degree 2, splitting field of \(x^2-\sqrt2\)), but \(L/F\) is not normal because the minimal polynomial of \(\sqrt[4]{2}\) over \(\mathbb{Q}\) is \(x^4-2\) which has a root \(i\sqrt[4]{2}\notin L\subset\mathbb{R}\). 
+
+\noindent\textbf{Problem 8.} Let \(K,L\) be intermediate fields of \(E/F\).
+\begin{enumerate}
+\item If \(K/F\) is normal, show that \(KL/L\) is normal.
+\item If both \(K/F\) and \(L/F\) are normal, show that \(KL/F\) and \(K\cap L/F\) are normal.
+\end{enumerate}
+
+\textit{Proof.}
+\begin{enumerate}
+\item \(K\) is a splitting field over \(F\) of a family of polynomials. These polynomials also lie in \(L[x]\), so their splitting field over \(L\) is contained in \(KL\). Hence \(KL\) is normal over \(L\).
+\item \(KL\) is generated by all roots of the polynomials defining \(K\) and \(L\); thus it is a splitting field over \(F\). For the intersection: if an irreducible \(p(x)\in F[x]\) has a root in \(K\cap L\), then because \(K/F\) and \(L/F\) are normal, all its roots lie in both \(K\) and \(L\), hence in \(K\cap L\). 
+\end{enumerate}
+
+\noindent\textbf{Problem 9.} Let \(q=p^n\). Prove that \(x^{q-1}-1=\prod_{\alpha\in\mathbb{F}_q^*}(x-\alpha)\) and \(\prod_{\alpha\in\mathbb{F}_q^*}\alpha = (-1)^{p^n}\).
+
+\textit{Proof.} \(\mathbb{F}_q^*\) is cyclic of order \(q-1\); each element is a root of \(x^{q-1}-1\). The polynomial is monic of degree \(q-1\) and has all \(q-1\) distinct roots, giving the factorisation. Comparing constant terms: \(-1 = \prod_{\alpha}(-\alpha)=(-1)^{q-1}\prod\alpha\), so \(\prod\alpha = (-1)^q = (-1)^{p^n}\). 
+
+\noindent\textbf{Problem 10.} Decide whether \(i\) belongs to:
+\begin{enumerate}
+\item \(\mathbb{Q}(\sqrt{-2})\)
+\item \(\mathbb{Q}(\sqrt[4]{-2})\)
+\item \(\mathbb{Q}(\alpha)\) where \(\alpha^3+\alpha+1=0\).
+\end{enumerate}
+
+\textit{Solution.}
+\begin{enumerate}
+\item No. If \(i=a+b\sqrt{-2}\) with rational \(a,b\), squaring gives \(-1=a^2-2b^2+2ab\sqrt{-2}\); then \(ab=0\) and \(a^2-2b^2=-1\) leads to contradictions.
+\item No. Let \(K=\mathbb{Q}(\sqrt[4]{-2})\). If \(i\in K\), then \(\sqrt2 = i\sqrt{-2} = i\cdot(\sqrt[4]{-2})^2 \in K\). Then \(\mathbb{Q}(i,\sqrt2)\subseteq K\). But \([\mathbb{Q}(i,\sqrt2):\mathbb{Q}]=4\) and \([K:\mathbb{Q}]=4\), so \(K=\mathbb{Q}(i,\sqrt2)\). However, \(\sqrt[4]{-2}=2^{-1/4}(1+i)\) would then imply \(2^{-1/4}\in\mathbb{Q}(\sqrt2)\), impossible.
+\item No. If \(i\in K\), then \(\mathbb{Q}(i)\subseteq K\). But \([\mathbb{Q}(i):\mathbb{Q}]=2\) does not divide \([K:\mathbb{Q}]=3\), contradiction. 
+\end{enumerate}
+
+\noindent\textbf{Problem 11.} Let \(F\) be a field of characteristic \(p>0\), \(a\in F\setminus F^p\). Prove that \(x^{p^e}-a\) is irreducible over \(F\) for any \(e\ge1\).
+
+\textit{Proof.} Let \(\alpha\) be a root in a splitting field; then \(x^{p^e}-a=(x-\alpha)^{p^e}\). Suppose \(g(x)=(x-\alpha)^d\) is a monic irreducible factor over \(F\) with \(d=mp^k\), \(p\nmid m\). Then \(g(x)=((x-\alpha)^{p^k})^m=(x^{p^k}-\alpha^{p^k})^m\). The coefficient of \(x^{(m-1)p^k}\) is \(-m\alpha^{p^k}\in F\), so \(\alpha^{p^k}\in F\). If \(k<e\), then \(a=\alpha^{p^e}=(\alpha^{p^k})^{p^{e-k}}\in F^p\), contradiction. Hence \(k\ge e\), and because \(d\le p^e\) we must have \(k=e\) and \(m=1\). Thus \(g=f\). 
+
+\noindent\textbf{Problem 12.} Prove that a normal closure of a finite separable extension is separable.
+
+\textit{Proof.} Let \(K/F\) be finite separable. Then \(K=F(\alpha_1,\dots,\alpha_n)\) with each \(\alpha_i\) separable over \(F\). Their minimal polynomials are separable. The normal closure is the splitting field of the product of these polynomials; it is generated by all their roots, which are separable. Hence the normal closure is separable over \(F\).
+
+\noindent\textbf{Problem 13.} Let \(K/E/F\) be algebraic extensions.
+\begin{enumerate}
+\item If \(u\in K\) is separable over \(F\), then \(u\) is separable over \(E\).
+\item If \(K/F\) is separable, then \(K/E\) and \(E/F\) are separable.
+\end{enumerate}
+
+\textit{Proof.}
+\begin{enumerate}
+\item The minimal polynomial of \(u\) over \(E\) divides its minimal polynomial over \(F\); the latter has no repeated roots, so the former also has none.
+\item Every element of \(K\) is separable over \(F\), hence over \(E\) by (1). For any \(x\in E\), \(x\in K\) so \(x\) is separable over \(F\). 
+\end{enumerate}
+
+\noindent\textbf{Problem 14.} Let \(F\) have characteristic \(p>0\).
+\begin{enumerate}
+\item If \(f(x)\in F[x]\) is irreducible and \(\deg f\) is not divisible by \(p\), then \(f\) is separable.
+\item If \([K:F]\) is not divisible by \(p\), then \(K/F\) is separable.
+\end{enumerate}
+
+\textit{Proof.}
+\begin{enumerate}
+\item If \(f\) were inseparable, then in characteristic \(p\) we would have \(f(x)=g(x^p)\), so \(p\mid\deg f\), contradiction.
+\item For any \(\alpha\in K\), \(\deg m_{\alpha}(x)\) divides \([K:F]\), so it is not divisible by \(p\); by (1), \(m_{\alpha}\) is separable. 
+\end{enumerate}
+
+\noindent\textbf{Problem 15.} Give an example of a degree‑2 extension that is not separable.
+
+\textit{Solution.} Let \(F=\mathbb{F}_2(t)\), the field of rational functions over \(\mathbb{F}_2\). The polynomial \(x^2-t\in F[x]\) is irreducible (Eisenstein with prime \(t\)). In characteristic 2, \(x^2-t=(x-\sqrt{t})^2\) in a splitting field, so the extension \(F(\sqrt{t})/F\) is purely inseparable of degree 2.
+
+\end{multicols}
+\end{document}
